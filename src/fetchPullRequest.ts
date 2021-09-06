@@ -15,6 +15,10 @@ export async function fetchPullRequest() {
   const allowClosed = getBooleanInput('allowClosed', { required: false });
   const shouldFail = getBooleanInput('failIfNotFound', { required: false });
 
+  debug(`context.issue.number: ${context.issue?.number}`);
+  // @ts-ignore
+  debug(`context.pull_request.number: ${context.pull_request?.number}`);
+
   // To be honest, it shouldn't be able to fail here, due to `{ required: true }` (etc) above.
   if (!githubToken) setFailed('token is required and not provided');
   if (!currentSha) setFailed('commitSha is required and not provided');
