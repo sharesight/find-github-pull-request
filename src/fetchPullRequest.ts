@@ -27,16 +27,16 @@ export async function fetchPullRequest() {
   if (!currentSha) setFailed('commitSha is required and not provided');
 
   if (context.eventName === 'pull_request') {
-    info('@@context.payload:');
-    info(JSON.stringify(context.payload));
+    debug('@@context.payload:');
+    debug(JSON.stringify(context.payload));
     currentSha = context.payload.head.sha;
     targetNumber = context.payload.pull_request.number;
   }
 
   const octokit = getOctokit(githubToken as string);
 
-  info('@@request');
-  info(
+  debug('@@request');
+  debug(
     JSON.stringify({
       owner: context.repo.owner,
       repo: context.repo.repo,
