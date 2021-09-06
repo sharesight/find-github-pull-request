@@ -19,6 +19,14 @@ export async function fetchPullRequest() {
   if (!githubToken) setFailed('token is required and not provided');
   if (!currentSha) setFailed('commitSha is required and not provided');
 
+  debug(
+    `Looking for pull requests with context: ${JSON.stringify({
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+      commit_sha: currentSha,
+    })}`
+  );
+
   const octokit = getOctokit(githubToken as string);
 
   const { data } =
