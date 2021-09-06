@@ -28,20 +28,12 @@ export async function fetchPullRequest() {
   if (context.eventName === 'pull_request') {
     debug('@@context.payload:');
     debug(JSON.stringify(context.payload));
-    currentSha = context.payload.head.sha;
+
+    currentSha = context.payload.head?.sha;
     targetNumber = context.payload.pull_request.number;
   }
 
   const octokit = getOctokit(githubToken as string);
-
-  debug('@@request');
-  debug(
-    JSON.stringify({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      commit_sha: currentSha,
-    })
-  );
 
   const { data } =
     await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
@@ -51,7 +43,9 @@ export async function fetchPullRequest() {
     });
 
   let pullRequests = data;
-  debug(`Found ${pullRequests.length} pull requests.`);
+  debug(
+    `Found ${pullRequests.length} pull requests with the sha ${currentSha}.`
+  );
 
   if (!allowClosed) {
     pullRequests = pullRequests.filter((pr) => pr.state === 'open');
