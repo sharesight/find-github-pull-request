@@ -11,8 +11,8 @@ inputs:
     default: ${{ github.token }}
   commitSha:
     required: false
-    description: Commit SHA to find a PR for.  Defaults to the current Github SHA.
-    default: ${{ github.sha }}
+    description: Commit SHA to find a PR for.  Defaults to the current PR Head SHA or the current Github SHA.
+    default: ${{ github.event.pull_request.head.sha || github.sha }}
   allowClosed:
     required: false
     description: Allow finding closed PRs.  Defaults to false (no).

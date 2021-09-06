@@ -1,6 +1,6 @@
 name: Comment on Every Pull Request
 
-on: [pull_request]
+on: [push, pull_request]
 
 jobs:
   add-pr-comment:
