@@ -1,5 +1,4 @@
 import {
-  info,
   debug,
   getInput,
   getBooleanInput,
