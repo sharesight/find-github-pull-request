@@ -1,4 +1,5 @@
 import {
+  info,
   debug,
   getInput,
   getBooleanInput,
@@ -11,9 +12,11 @@ import { sanitize } from './sanitize';
 
 export async function fetchPullRequest() {
   const githubToken = getInput('token', { required: true }); // not required in action.yml, but the default should provide
-  const currentSha = getInput('commitSha', { required: true }); // not required in action.yml, but the default should provide
+  let currentSha = getInput('commitSha', { required: false });
   const allowClosed = getBooleanInput('allowClosed', { required: false });
   const shouldFail = getBooleanInput('failIfNotFound', { required: false });
+
+  let targetNumber: number | undefined;
 
   debug(`context.issue.number: ${context.issue?.number}`);
   // @ts-ignore
@@ -23,15 +26,23 @@ export async function fetchPullRequest() {
   if (!githubToken) setFailed('token is required and not provided');
   if (!currentSha) setFailed('commitSha is required and not provided');
 
-  debug(
-    `Looking for pull requests with context: ${JSON.stringify({
+  if (context.eventName === 'pull_request') {
+    info('@@context.payload:');
+    info(JSON.stringify(context.payload));
+    currentSha = context.payload.head.sha;
+    targetNumber = context.payload.pull_request.number;
+  }
+
+  const octokit = getOctokit(githubToken as string);
+
+  info('@@request');
+  info(
+    JSON.stringify({
       owner: context.repo.owner,
       repo: context.repo.repo,
       commit_sha: currentSha,
-    })}`
+    })
   );
-
-  const octokit = getOctokit(githubToken as string);
 
   const { data } =
     await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
@@ -59,6 +70,14 @@ export async function fetchPullRequest() {
   }
 
   const pullRequest = pullRequests[0];
+
+  if (targetNumber && pullRequest.number !== targetNumber) {
+    setFailed(
+      `We were looking for PR#${targetNumber}, received PR#${pullRequest.number}.`
+    );
+
+    return;
+  }
 
   // Sanitize the title and body to avoid Shell interpolation of backticks and more.
   const title = sanitize(pullRequest.title);
