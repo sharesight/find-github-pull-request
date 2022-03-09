@@ -8814,7 +8814,7 @@ const fetchPRBySha = () => fetchPRBySha_awaiter(void 0, void 0, void 0, function
  * Particularly, a backtick might break if wanting to use in a Github Action bash,
  * Eg. this can break: `echo "PR_TITLE=${{ steps.find-pr.outputs.title }}" >> $GITHUB_ENV`
  */
-const sanitize = (str) => str === null || str === void 0 ? void 0 : str.replace(/['"`]+/g, '');
+const sanitize = (str) => str === null || str === void 0 ? void 0 : str.replace(/['"`\(\)\[\]]+/g, '');
 
 ;// CONCATENATED MODULE: ./src/setOutputs.ts
 
