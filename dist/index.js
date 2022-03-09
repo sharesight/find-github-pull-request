@@ -8727,7 +8727,7 @@ __nccwpck_require__.r(__webpack_exports__);
 var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
-;// CONCATENATED MODULE: ./src/findPullRequestFromSha.ts
+;// CONCATENATED MODULE: ./src/fetchPRByNumber.ts
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8739,8 +8739,45 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 };
 
 
-const findPullRequestFromSha = () => __awaiter(void 0, void 0, void 0, function* () {
-    const githubToken = (0,core.getInput)('token', { required: false }); // not required unless for a search
+/**
+ * Fetch the pull request using a commit number.
+ */
+const fetchPRByNumber = () => __awaiter(void 0, void 0, void 0, function* () {
+    const githubToken = (0,core.getInput)('token', { required: true });
+    // To be honest, it shouldn't be able to fail here, due to `{ required: true }` (etc) above.
+    if (!githubToken)
+        (0,core.setFailed)('token is required and not provided');
+    const octokit = (0,github.getOctokit)(githubToken);
+    const number = github.context.payload.pull_request.number;
+    const { data: pullRequest } = yield octokit.rest.pulls.get({
+        owner: "octokit",
+        repo: "rest.js",
+        pull_number: number,
+    });
+    if (!pullRequest) {
+        (0,core.setFailed)(`Pull request not found for ${github.context.repo.owner}/${github.context.repo.repo}#${number}, Github Action failed.`);
+        return;
+    }
+    return pullRequest;
+});
+
+;// CONCATENATED MODULE: ./src/fetchPRBySha.ts
+var fetchPRBySha_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+/**
+ * Fetch the pull request using a commit sha.
+ */
+const fetchPRBySha = () => fetchPRBySha_awaiter(void 0, void 0, void 0, function* () {
+    const githubToken = (0,core.getInput)('token', { required: true });
     const allowClosed = (0,core.getBooleanInput)('allowClosed', { required: false });
     const failIfNotFound = (0,core.getBooleanInput)('failIfNotFound', { required: false });
     const currentSha = (0,core.getInput)('commitSha', { required: false });
@@ -8828,12 +8865,21 @@ var getPullRequest_awaiter = (undefined && undefined.__awaiter) || function (thi
 };
 
 
+
+
+
 const getPullRequest = () => getPullRequest_awaiter(void 0, void 0, void 0, function* () {
-    /**
-     * Fetch the pull request from the current context's sha.
-     * This is wrapped in another helper function to make testing and debugging easier.
-     */
-    const pullRequest = yield findPullRequestFromSha();
+    let pullRequest;
+    if (github.context.eventName === 'pull_request') {
+        pullRequest = yield fetchPRByNumber();
+    }
+    else if (github.context.eventName === 'push') {
+        pullRequest = yield fetchPRBySha();
+    }
+    else {
+        (0,core.setFailed)(`Received an unknown event: ${github.context.eventName}.`);
+    }
+    // NOTE: handling of undefined values 
     setOutputs(pullRequest);
 });
 
