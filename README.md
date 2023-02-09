@@ -20,7 +20,7 @@ jobs:
 
       - name: Find Pull Request
         id: find-pr
-        uses: sharesight/find-github-pull-request@1.1.2
+        uses: sharesight/find-github-pull-request@1.2.0
         with:
           # These are all default values.
           token: ${{ secrets.GITHUB_TOKEN }}
