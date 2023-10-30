@@ -5,10 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+ - [#231](https://github.com/sharesight/find-github-pull-request/pull/231) - Bump tough-cookie from 4.0.0 to 4.1.3
+ - [#233](https://github.com/sharesight/find-github-pull-request/pull/233) - Bump semver from 6.3.0 to 6.3.1
+ - [#235](https://github.com/sharesight/find-github-pull-request/pull/235) - Bump word-wrap from 1.2.3 to 1.2.4
+ - [#243](https://github.com/sharesight/find-github-pull-request/pull/243) - Bump @types/node from 17.0.33 to 20.5.1
 
 ## [1.2.0] - 2023-02-09
 
- - Several dependency upgrades including Github actions, which deprecates Node 12 actions.
+ - [#200](https://github.com/sharesight/find-github-pull-request/pull/200) - Several dependency upgrades including Github actions, which deprecates Node 12 actions.
 
 ## [1.1.2] - 2022-03-14
 
