@@ -17,6 +17,7 @@ jobs:
         id: find-pr
         uses: ./ # run against self
         with:
+          npm-auth-token: ${{ secrets.SHARESIGHT_GITHUB_PACKAGES_TOKEN }}
           failIfNotFound: ${{ github.event_name == 'pull_request' }} # Fail for a PR, not for a push
 
       # Do not debug the body as it will break things!
