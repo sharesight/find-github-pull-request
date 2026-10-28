@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+ - Run the action on the `node24` runtime (was `node16`, which GitHub no longer supports and forces onto Node 24 with a deprecation warning). Build and test CI on Node 24 via `.nvmrc`, and bump `actions/checkout` to v7, `actions/setup-node` to v6 and `sticky-pull-request-comment` to v3.
+
 ## [1.3.0] - 2023-11-08
 
  - [#231](https://github.com/sharesight/find-github-pull-request/pull/231) - Bump tough-cookie from 4.0.0 to 4.1.3
